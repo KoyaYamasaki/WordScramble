@@ -1,7 +1,4 @@
 # Word Scramble
 
 ## Use :
-- UIReferenceLibraryViewController
-
-## Todo:
-- Use UIKit for UIReferenceLibraryViewController
+- Use UIReferenceLibraryViewController with UIViewControllerRepresentable.

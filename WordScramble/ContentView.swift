@@ -10,7 +10,7 @@ import Foundation
 import CoreServices
 
 struct ContentView: View {
-  @State private var usedWordsWithDefinition: [String:String] = [:]
+  @State private var usedWords:[String] = []
   @State private var rootWord = ""
   @State private var newWord = ""
 
@@ -31,10 +31,10 @@ struct ContentView: View {
           .autocapitalization(.none)
           .padding()
           .disabled(rootWord.isEmpty)
-        List(usedWordsWithDefinition.keys.map{$0}, id: \.self) { word in
+        List(usedWords.map{$0}, id: \.self) { word in
           HStack {
             Image(systemName: "\(word.count).circle")
-            NavigationLink(word, destination: WordDefinition(definition: usedWordsWithDefinition[word]!))
+            NavigationLink(word, destination: DictionaryView(word: word))
           }
           .accessibilityElement(children: .ignore)
           .accessibility(label: Text("\(word), \(word.count) letters"))
@@ -51,7 +51,7 @@ struct ContentView: View {
       .navigationBarItems(
         leading:
           Button(action: {
-            usedWordsWithDefinition = [:]
+            usedWords = []
             score = 0
             startGame()
           }, label: {
@@ -91,30 +91,12 @@ struct ContentView: View {
       return
     }
 
-    // extra validation to come
-    let definition = getDefinition(from: answer)
-    usedWordsWithDefinition[answer] = definition
+    usedWords.append(answer)
     score += answer.count
     if highestScore < score {
       UserDefaults.standard.set(score, forKey: "highestScore")
     }
     newWord = ""
-  }
-
-  func getDefinition(from word: String) -> String {
-    var defineStr: String = ""
-    if UIReferenceLibraryViewController.dictionaryHasDefinition(forTerm: word) {
-      let ref = UIReferenceLibraryViewController(term: word)
-      let defValue = ref.value(forKeyPath: "_definitionValues") as! NSArray
-      let define = (defValue[0] as AnyObject).value(forKey: "_definition")
-      defineStr = (define as AnyObject).value(forKey: "string") as! String
-      
-//      let defineArray = defineStr.components(separatedBy: "\n")
-
-    } else {
-      defineStr = "Definition not found."
-    }
-    return defineStr
   }
 
   func startGame() {
@@ -130,7 +112,7 @@ struct ContentView: View {
   }
 
   func isOriginal(word: String) -> Bool {
-    !usedWordsWithDefinition.keys.contains(word)
+    !usedWords.contains(word)
   }
 
   func isPossible(word: String) -> Bool {
