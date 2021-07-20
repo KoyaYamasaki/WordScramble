@@ -1,6 +1,6 @@
 ## User settings
-xcuserdata/
-project.xcworkspace/
+*/xcuserdata/
+*/project.xcworkspace/
 
 ## General
 *.DS_Store
