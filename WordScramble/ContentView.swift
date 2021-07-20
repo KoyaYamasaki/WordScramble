@@ -31,9 +31,13 @@ struct ContentView: View {
           .autocapitalization(.none)
           .padding()
           .disabled(rootWord.isEmpty)
-        List(usedWordsWithDefinition.keys.map{$0}, id: \.self) {
-          Image(systemName: "\($0.count).circle")
-          NavigationLink($0, destination: WordDefinition(definition: usedWordsWithDefinition[$0]!))
+        List(usedWordsWithDefinition.keys.map{$0}, id: \.self) { word in
+          HStack {
+            Image(systemName: "\(word.count).circle")
+            NavigationLink(word, destination: WordDefinition(definition: usedWordsWithDefinition[word]!))
+          }
+          .accessibilityElement(children: .ignore)
+          .accessibility(label: Text("\(word), \(word.count) letters"))
         }
         Section {
           Text("Score: \(score)")
